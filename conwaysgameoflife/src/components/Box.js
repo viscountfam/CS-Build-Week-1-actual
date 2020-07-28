@@ -8,7 +8,7 @@ export default function Box(props) {
         <div
         className = {props.boxClass}>
         id = {props.id}
-        onclick={props.selectBox}
+        onclick={selectBox}
         </div>
     )
 }

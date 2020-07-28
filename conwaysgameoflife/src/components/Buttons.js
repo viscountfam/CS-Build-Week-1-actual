@@ -1,7 +1,7 @@
 import React from 'react'
 import { ButtonToolbar, Dropdown, DropdownButton} from 'react-bootstrap'
 export default function Buttons(props) {
-    handleSelect = (evt) => {
+   const  handleSelect = (evt) => {
         props.gridSize(evt)
     }
     return (
@@ -16,7 +16,7 @@ export default function Buttons(props) {
                 <DropdownButton
                     title="Grid Size"
                     id="Size-menu"
-                    onSelect={this.handleSelect}
+                    onSelect={handleSelect}
                     >
                     <Dropdown eventKey = "1">20 x 10</Dropdown>
                     <Dropdown eventKey = "2">50 x 50</Dropdown>
