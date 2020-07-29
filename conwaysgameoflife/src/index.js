@@ -21,33 +21,32 @@ function Box(props) {
   )
 }
 
-function Grid(props) {
-  const width = (props.cols * 14) + 1
-  const rowsArr = props.gridFull.map((rowArr, rowIdx) => rowArr.map((item, colIdx) => {
-    const boxId = `${rowIdx}_${colIdx}`
-  }))
+const Grid = props => {
+  const width = props.cols * 14
+  let rowsArr = [];
+  let boxClass = "";
+  for (var i = 0; i < props.rows; i++){
+    for(var j = 0; j < props.cols; j++){
+        let boxId = i+"_"+j;
 
-  let boxClass = ""
-  for (let i = 0; i < props.rows; i++){
-      for(var j = 0 ; j < props.cols; j++){
-          let boxId = i + "_" + j
-          boxClass = props.gridFull[i][j] ? "box on" : "box off";
-          rowsArr.push(
-              <Box 
-              boxClass={boxClass}
-              key={boxId}
-              boxId= {boxId}
-              row = {i}
-              col = {j}
-              selectBox = {props.selectBox}
-              />
-          )
-      }
+        boxClass = props.gridFull[i][j] ? "box on" : "box off";
+        rowsArr.push(
+          <Box
+            boxClass={boxClass}
+            key={boxId}
+            row={i}
+            col={j}
+            selectBox={props.selectBox}
+          >
+          </Box>
+        );
+    }
   }
   return (
-      <div className="grid" style={{width: width}}>
-          {rowsArr}
-      </div>
+    <div className="grid" style={{width: width}}>
+      {rowsArr}
+    </div>
+
   )
 }
 
@@ -59,7 +58,7 @@ function Buttons(props) {
       <div className="center">
           <ButtonToolbar>
               <button className="btn btn-default" onClick={props.playButton}>Play</button>
-              <button className="btn btn-default" onClick={() =>props.pauseButton(props.IntervalID)}>Pause</button>
+              <button className="btn btn-default" onClick={props.pauseButton}>Pause</button>
               <button className="btn btn-default" onClick={props.clear}>clear</button>
               <button className="btn btn-default" onClick={props.seed}>Seed</button>
               <button className="btn btn-default" onClick={props.Slow}>Slow</button>
@@ -85,7 +84,7 @@ function Main() {
   const empty = Array(rows).fill().map(() => Array(cols).fill(false))
   const [generation, setGeneration] = useState(0)
   const [gridFull, setGridFull] = useState(empty)
-  // const [intervalID, setIntervalID] = useState(null)
+  const [intervalID, setIntervalID] = useState(null)
   const selectBox = (row, col) => {
       let gridCopy = arrayClone(gridFull);
       gridCopy[row][col] = !gridCopy[row][col];
@@ -105,9 +104,7 @@ function Main() {
   }
 
   const playButton = () => {
-      // setIntervalID(setInterval(play, speed))
-     let IntervalID = setInterval(play,speed)
-     return IntervalID
+      setIntervalID(setInterval(play, speed))
   }
 
   const pauseButton = (IntervalID) => {
@@ -176,14 +173,13 @@ function Main() {
   }
   useEffect(() => {
      seed() 
-    let IntervalID = playButton()
+     playButton()
   }, [])
   return (
       <div>
           <h1>Conway's Game of Life</h1>
           <Buttons
               playButton={playButton}
-              IntervalID={IntervalID}
               pauseButton={pauseButton}
               slow={slow}
               fast={fast}
