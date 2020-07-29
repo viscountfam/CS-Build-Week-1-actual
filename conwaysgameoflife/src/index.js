@@ -13,11 +13,12 @@ function Box(props) {
   const selectBox = () => {
     props.selectBox(props.row, props.col)
   }
+  console.log(props)
   return (
-    <div className={props.boxClass}>
+    <div className={props.boxClass}
       id={props.id}
       OnClick={selectBox}  
-    </div>
+    />
   )
 }
 
@@ -79,8 +80,8 @@ function Buttons(props) {
 
 function Main() {
   const [speed, setSpeed] = useState(100)
-  const [rows, setRows] = useState(30)
-  const [cols, setCols] = useState(50)
+  const [rows, setRows] = useState(5)
+  const [cols, setCols] = useState(5)
   const empty = Array(rows).fill().map(() => Array(cols).fill(false))
   const [generation, setGeneration] = useState(0)
   const [gridFull, setGridFull] = useState(empty)
