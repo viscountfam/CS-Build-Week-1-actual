@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { ButtonToolbar, Dropdown, DropdownButton } from "react-bootstrap";
+import { Button, ButtonToolbar, Dropdown, DropdownButton } from "react-bootstrap";
 import "./index.css";
 
 function arrayClone(arr) {
@@ -60,24 +60,24 @@ class Buttons extends React.Component {
     return (
       <div className="center">
         <ButtonToolbar>
-          <button className="btn btn-default" onClick={this.props.playButton}>
+          <Button className="btn btn-default" onClick={this.props.playButton}>
             Play
-          </button>
-          <button className="btn btn-default" onClick={this.props.pauseButton}>
+          </Button>
+          <Button className="btn btn-default" onClick={this.props.pauseButton}>
             Pause
-          </button>
-          <button className="btn btn-default" onClick={this.props.clear}>
+          </Button>
+          <Button className="btn btn-default" onClick={this.props.clear}>
             Clear
-          </button>
-          <button className="btn btn-default" onClick={this.props.slow}>
+          </Button>
+          <Button className="btn btn-default" onClick={this.props.slow}>
             Slow
-          </button>
-          <button className="btn btn-default" onClick={this.props.fast}>
+          </Button>
+          <Button className="btn btn-default" onClick={this.props.fast}>
             Fast
-          </button>
-          <button className="btn btn-default" onClick={this.props.seed}>
+          </Button>
+          <Button className="btn btn-default" onClick={this.props.seed}>
             Seed
-          </button>
+          </Button>
           <DropdownButton
             title="Grid Size"
             id="size-menu"
@@ -157,6 +157,7 @@ class Main extends React.Component {
       gridFull,
       generation: 0
     }));
+    this.pauseButton()
   };
 
   gridSize = size => {
