@@ -8,7 +8,7 @@ export default function Grid(props) {
     for (let i = 0; i < props.rows; i++){
         for(var j = 0 ; j < props.cols; j++){
             let boxId = i + "_" + j
-            boxClass = this.props.gridFull[i][j] ? "box on" : "box off";
+            boxClass = props.gridFull[i][j] ? "box on" : "box off";
             rowsArr.push(
                 <Box 
                 boxClass={boxClass}

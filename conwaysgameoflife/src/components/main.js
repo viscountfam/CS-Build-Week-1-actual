@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import Grid from "./Grid"
-import Box from "./Box"
 import Buttons from "./Buttons"
 
 export default function Main() {
@@ -10,7 +9,7 @@ export default function Main() {
     const empty = Array(rows).fill().map(() => Array(cols).fill(false))
     const [generation, setGeneration] = useState(0)
     const [gridFull, setGridFull] = useState(empty)
-
+    const [intervalID, setIntervalID] = useState(null)
     const selectBox = (row, col) => {
         let gridCopy = arrayClone(gridFull);
         gridCopy[row][col] = !gridCopy[row][col];
@@ -30,11 +29,11 @@ export default function Main() {
     }
 
     const playButton = () => {
-        intervalID = setInterval(play, speed)
+        setIntervalID(setInterval(play, speed))
     }
 
     const pauseButton = () => {
-        clearInterval(intervalID)
+        setIntervalID(clearInterval(intervalID))
     }
 
     const slow = () => {
@@ -65,6 +64,8 @@ export default function Main() {
                 setCols(70)
                 setRows(50)
             break;
+            default:
+                break
         }
         clear()
     }
@@ -76,17 +77,17 @@ export default function Main() {
         let g2 = arrayClone(gridFull)
 
         
-		for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.cols; j++) {
+		for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
               let count = 0;
               if (i > 0) if (g[i - 1][j]) count++;
               if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
-              if (i > 0 && j < this.cols - 1) if (g[i - 1][j + 1]) count++;
-              if (j < this.cols - 1) if (g[i][j + 1]) count++;
+              if (i > 0 && j < cols - 1) if (g[i - 1][j + 1]) count++;
+              if (j < cols - 1) if (g[i][j + 1]) count++;
               if (j > 0) if (g[i][j - 1]) count++;
-              if (i < this.rows - 1) if (g[i + 1][j]) count++;
-              if (i < this.rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
-              if (i < this.rows - 1 && j < this.cols - 1) if (g[i + 1][j + 1]) count++;
+              if (i < rows - 1) if (g[i + 1][j]) count++;
+              if (i < rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
+              if (i < rows - 1 && j < cols - 1) if (g[i + 1][j + 1]) count++;
               if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
               if (!g[i][j] && count === 3) g2[i][j] = true;
             }
@@ -96,7 +97,7 @@ export default function Main() {
     }
     useEffect(() => {
        seed() 
-       this.playButton()
+       playButton()
     }, [])
     return (
         <div>
