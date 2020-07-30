@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Button, ButtonToolbar, Dropdown, DropdownButton } from "react-bootstrap";
+import {ButtonToolbar, Dropdown, DropdownButton } from "react-bootstrap";
 import "./index.css";
 
 function arrayClone(arr) {
@@ -60,24 +60,33 @@ class Buttons extends React.Component {
     return (
       <div className="center">
         <ButtonToolbar>
-          <Button className="btn btn-default" onClick={this.props.playButton}>
+          <button className="btn btn-default" onClick={this.props.playButton}>
             Play
-          </Button>
-          <Button className="btn btn-default" onClick={this.props.pauseButton}>
+          </button>
+          <button className="btn btn-default" onClick={this.props.pauseButton}>
             Pause
-          </Button>
-          <Button className="btn btn-default" onClick={this.props.clear}>
+          </button>
+          <button className="btn btn-default" onClick={this.props.clear}>
             Clear
-          </Button>
-          <Button className="btn btn-default" onClick={this.props.slow}>
+          </button>
+          <button className="btn btn-default" onClick={this.props.slow}>
             Slow
-          </Button>
-          <Button className="btn btn-default" onClick={this.props.fast}>
+          </button>
+          <button className="btn btn-default" onClick={this.props.fast}>
             Fast
-          </Button>
-          <Button className="btn btn-default" onClick={this.props.seed}>
+          </button>
+          <button className="btn btn-default" onClick={this.props.seed}>
             Seed
-          </Button>
+          </button>
+          <button className="btn btn-default" onClick={() => this.props.generate(1)}>
+            Next Generation
+          </button>
+          <button className="btn btn-default" onClick={() => this.props.generate(5)}>
+            Next 5 Generations
+          </button>
+          <button className="btn btn-default" onClick={() => this.props.generate(10)}>
+            Next 10 Generations
+          </button>
           <DropdownButton
             title="Grid Size"
             id="size-menu"
@@ -177,6 +186,12 @@ class Main extends React.Component {
     this.clear();
   };
 
+  generate = n => {
+    for(let i = 0; i < n; i++){
+      this.play()
+    }
+  }
+
   play = () => {
     let g = this.state.gridFull;
     let g2 = arrayClone(this.state.gridFull);
@@ -214,6 +229,7 @@ class Main extends React.Component {
           clear={this.clear}
           seed={this.seed}
           gridSize={this.gridSize}
+          generate={this.generate}
         />
         <Grid
           gridFull={this.state.gridFull}
