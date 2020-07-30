@@ -26,8 +26,8 @@ const Grid = props => {
   const width = props.cols * 14
   let rowsArr = [];
   let boxClass = "";
-  for (var i = 0; i < props.rows; i++){
-    for(var j = 0; j < props.cols; j++){
+  for (let i = 0; i < props.rows; i++){
+    for(let j = 0; j < props.cols; j++){
         let boxId = i+"_"+j;
 
         boxClass = props.gridFull[i][j] ? "box on" : "box off";
@@ -58,12 +58,15 @@ function Buttons(props) {
   return (
       <div className="center">
           <ButtonToolbar>
-              <button className="btn btn-default" onClick={props.playButton}>Play</button>
-              <button className="btn btn-default" onClick={props.pauseButton}>Pause</button>
-              <button className="btn btn-default" onClick={props.clear}>clear</button>
-              <button className="btn btn-default" onClick={props.seed}>Seed</button>
-              <button className="btn btn-default" onClick={props.Slow}>Slow</button>
-              <button className="btn btn-default" onClick={props.fast}>Fast</button>
+              <button className="btn btn-default" onClick={() => props.playButton()}>Play</button>
+              <button className="btn btn-default" onClick={() => props.pauseButton()}>Pause</button>
+              <button className="btn btn-default" onClick={() => props.clear()}>clear</button>
+              <button className="btn btn-default" onClick={() => props.seed()}>Seed</button>
+              <button className="btn btn-default" onClick={() =>props.Slow()}>Slow</button>
+              <button className="btn btn-default" onClick={() => props.fast()}>Fast</button>
+              <button className="btn btn-default" onClick={() => props.generate(1)}>Next Generation</button>
+              <button className="btn btn-default" onClick={() => props.generate(5)}>Next 5 Generations</button>
+              <button className="btn btn-default" onClick={() => props.generate(10)}>Next 10 Generations</button>
               <DropdownButton
                   title="Grid Size"
                   id="Size-menu"
@@ -80,37 +83,59 @@ function Buttons(props) {
 
 function Main() {
   const [speed, setSpeed] = useState(100)
-  const [rows, setRows] = useState(5)
-  const [cols, setCols] = useState(5)
+  const [rows, setRows] = useState(30)
+  const [cols, setCols] = useState(50)
   const empty = Array(rows).fill().map(() => Array(cols).fill(false))
   const [generation, setGeneration] = useState(0)
   const [gridFull, setGridFull] = useState(empty)
-  const [intervalID, setIntervalID] = useState(null)
   const selectBox = (row, col) => {
-      let gridCopy = arrayClone(gridFull);
-      gridCopy[row][col] = !gridCopy[row][col];
-      setGridFull(gridCopy)
+    let gridCopy = arrayClone(gridFull);
+    gridCopy[row][col] = !gridCopy[row][col];
+    setGridFull(gridCopy)
   }
-
+  
   const seed = () => {
-      let gridCopy = arrayClone(gridFull);
+    let gridCopy = arrayClone(gridFull);
       for (let i =0; i < rows; i++){
           for(let j = 0; j < cols; j++){
               if (Math.floor(Math.random() * 4) === 1){
-                  gridCopy[i][j] = true
+                gridCopy[i][j] = true
               }
+            }
           }
-      }
-      setGridFull(gridCopy)
-  }
-
-  const playButton = () => {
-      setIntervalID(setInterval(play, speed))
-  }
-
-  const pauseButton = (IntervalID) => {
-      // setIntervalID(clearInterval(intervalID))
-      clearInterval(IntervalID)
+          setGridFull(gridCopy)
+        }
+        
+        const play = () => {
+            let g = gridFull
+            let g2 = arrayClone(gridFull)
+      
+            
+        for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                  let count = 0;
+                  if (i > 0) if (g[i - 1][j]) count++;
+                  if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
+                  if (i > 0 && j < cols - 1) if (g[i - 1][j + 1]) count++;
+                  if (j < cols - 1) if (g[i][j + 1]) count++;
+                  if (j > 0) if (g[i][j - 1]) count++;
+                  if (i < rows - 1) if (g[i + 1][j]) count++;
+                  if (i < rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
+                  if (i < rows - 1 && j < cols - 1) if (g[i + 1][j + 1]) count++;
+                  if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
+                  if (!g[i][j] && count === 3) g2[i][j] = true;
+                }
+            }
+            setGridFull(g2)
+            setGeneration(generation + 1)
+        }
+        let intervalID = setInterval(play, speed)
+        const playButton = () => {
+          clearInterval(intervalID)
+        }
+        
+        const pauseButton = () => {
+          clearInterval(intervalID)
   }
 
   const slow = () => {
@@ -125,6 +150,7 @@ function Main() {
 
   const clear = () => {
       setGridFull(empty)
+      setGeneration(0)
   }
 
   const gridSize = (size) => {
@@ -147,31 +173,14 @@ function Main() {
       clear()
   }
 
-
-
-  const play = () => {
-      let g = gridFull
-      let g2 = arrayClone(gridFull)
-
-      
-  for (let i = 0; i < rows; i++) {
-          for (let j = 0; j < cols; j++) {
-            let count = 0;
-            if (i > 0) if (g[i - 1][j]) count++;
-            if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
-            if (i > 0 && j < cols - 1) if (g[i - 1][j + 1]) count++;
-            if (j < cols - 1) if (g[i][j + 1]) count++;
-            if (j > 0) if (g[i][j - 1]) count++;
-            if (i < rows - 1) if (g[i + 1][j]) count++;
-            if (i < rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
-            if (i < rows - 1 && j < cols - 1) if (g[i + 1][j + 1]) count++;
-            if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
-            if (!g[i][j] && count === 3) g2[i][j] = true;
-          }
-      }
-      setGridFull(g2)
-      setGeneration(generation + 1)
+  const generate = (n) => {
+    for(let i = 0; i < n; i++){
+      play()
+    }
   }
+
+
+
   useEffect(() => {
      seed() 
      playButton()
@@ -186,6 +195,7 @@ function Main() {
               fast={fast}
               clear={clear}
               seed={seed}
+              generate={generate}
               gridSize={gridSize}
           />
           <Grid gridFull={gridFull} rows={rows} cols={cols} selectBox={selectBox}
