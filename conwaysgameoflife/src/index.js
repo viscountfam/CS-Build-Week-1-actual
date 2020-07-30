@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback, useRef} from 'react'
 import ReactDOM from 'react-dom';
 import { ButtonToolbar, Dropdown, DropdownButton } from "react-bootstrap";
 import './index.css';
@@ -62,7 +62,7 @@ function Buttons(props) {
               <button className="btn btn-default" onClick={() => props.pauseButton()}>Pause</button>
               <button className="btn btn-default" onClick={() => props.clear()}>clear</button>
               <button className="btn btn-default" onClick={() => props.seed()}>Seed</button>
-              <button className="btn btn-default" onClick={() =>props.Slow()}>Slow</button>
+              <button className="btn btn-default" onClick={() =>props.slow()}>Slow</button>
               <button className="btn btn-default" onClick={() => props.fast()}>Fast</button>
               <button className="btn btn-default" onClick={() => props.generate(1)}>Next Generation</button>
               <button className="btn btn-default" onClick={() => props.generate(5)}>Next 5 Generations</button>
@@ -88,11 +88,28 @@ function Main() {
   const empty = Array(rows).fill().map(() => Array(cols).fill(false))
   const [generation, setGeneration] = useState(0)
   const [gridFull, setGridFull] = useState(empty)
+  const [run, setRun] = useState(true)
   const selectBox = (row, col) => {
     let gridCopy = arrayClone(gridFull);
     gridCopy[row][col] = !gridCopy[row][col];
     setGridFull(gridCopy)
   }
+
+  const rowsRef = useRef(rows)
+  const colsRef = useRef(cols)
+  const genCount = useRef(generation)
+  const gridRef = useRef(gridFull)
+  const runRef = useRef(run)
+  const speedRef = useRef(speed)
+
+  gridRef.current = gridFull;
+  genCount.current = generation;
+  rowsRef.current = rows
+  colsRef.current = cols
+  runRef.current = run
+  speedRef.current = speed;
+
+
   
   const seed = () => {
     let gridCopy = arrayClone(gridFull);
@@ -106,46 +123,75 @@ function Main() {
           setGridFull(gridCopy)
         }
         
-        const play = () => {
-            let g = gridFull
-            let g2 = arrayClone(gridFull)
+        // const play = () => {
+        //     let g = gridFull.current
+        //     let g2 = arrayClone(gridFull.current)
       
             
-        for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                  let count = 0;
-                  if (i > 0) if (g[i - 1][j]) count++;
-                  if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
-                  if (i > 0 && j < cols - 1) if (g[i - 1][j + 1]) count++;
-                  if (j < cols - 1) if (g[i][j + 1]) count++;
-                  if (j > 0) if (g[i][j - 1]) count++;
-                  if (i < rows - 1) if (g[i + 1][j]) count++;
-                  if (i < rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
-                  if (i < rows - 1 && j < cols - 1) if (g[i + 1][j + 1]) count++;
-                  if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
-                  if (!g[i][j] && count === 3) g2[i][j] = true;
-                }
+        // for (let i = 0; i < rowsRef.current; i++) {
+        //         for (let j = 0; j < colsRef.current; j++) {
+        //           let count = 0;
+        //           if (i > 0) if (g[i - 1][j]) count++;
+        //           if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
+        //           if (i > 0 && j < cols - 1) if (g[i - 1][j + 1]) count++;
+        //           if (j < cols - 1) if (g[i][j + 1]) count++;
+        //           if (j > 0) if (g[i][j - 1]) count++;
+        //           if (i < rows - 1) if (g[i + 1][j]) count++;
+        //           if (i < rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
+        //           if (i < rows - 1 && j < cols - 1) if (g[i + 1][j + 1]) count++;
+        //           if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
+        //           if (!g[i][j] && count === 3) g2[i][j] = true;
+        //         }
+        //     }
+        //     setGridFull(g2)
+        //     setGeneration(genCount.current + 1)
+        //     setTimeout(play, speed.current)
+        // }
+        const play = useCallback(() => {
+          if (runRef.current) {
+            let g = gridRef.current;
+            let g2 = arrayClone(gridRef.current);
+      
+            for (let i = 0; i < rowsRef.current; i++) {
+              for (let j = 0; j < colsRef.current; j++) {
+                let count = 0;
+                if (i > 0) if (g[i - 1][j]) count++;
+                if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
+                if (i > 0 && j < cols - 1) if (g[i - 1][j + 1]) count++;
+                if (j < cols - 1) if (g[i][j + 1]) count++;
+                if (j > 0) if (g[i][j - 1]) count++;
+                if (i < rows - 1) if (g[i + 1][j]) count++;
+                if (i < rows - 1 && j > 0) if (g[i + 1][j - 1]) count++;
+                if (i < rows - 1 && cols - 1) if (g[i + 1][j + 1]) count++;
+                if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
+                if (!g[i][j] && count === 3) g2[i][j] = true;
+              }
             }
-            setGridFull(g2)
-            setGeneration(generation + 1)
-        }
-        let intervalID = setInterval(play, speed)
+      
+            setGridFull(g2);
+            setGeneration(genCount.current + 1);
+            setTimeout(play, speedRef.current);
+          } else {
+            return;
+          }
+        });
+
         const playButton = () => {
-          clearInterval(intervalID)
+          setRun(true)
+          runRef.current = true;
+          play()
         }
         
         const pauseButton = () => {
-          clearInterval(intervalID)
+          setRun(false)
   }
 
   const slow = () => {
       setSpeed(1000)
-      playButton()
   }
 
   const fast = () => {
       setSpeed(10)
-      playButton()
   }
 
   const clear = () => {
@@ -175,16 +221,12 @@ function Main() {
 
   const generate = (n) => {
     for(let i = 0; i < n; i++){
+      runRef.current = true;
       play()
+      pauseButton()
     }
   }
 
-
-
-  useEffect(() => {
-     seed() 
-     playButton()
-  }, [])
   return (
       <div>
           <h1>Conway's Game of Life</h1>
