@@ -61,10 +61,10 @@ class Buttons extends React.Component {
       <div className="center">
         <ButtonToolbar>
           <button className="btn btn-default" onClick={this.props.playButton}>
-            Play
+          {String.fromCharCode(9654)}
           </button>
           <button className="btn btn-default" onClick={this.props.pauseButton}>
-            Pause
+          {String.fromCharCode(9208)}
           </button>
           <button className="btn btn-default" onClick={this.props.clear}>
             Clear
@@ -76,16 +76,19 @@ class Buttons extends React.Component {
             Fast
           </button>
           <button className="btn btn-default" onClick={this.props.seed}>
-            Seed
+          <span role="img" alt="a sprouting seed">🌱</span> Seed
           </button>
           <button className="btn btn-default" onClick={() => this.props.generate(1)}>
-            Next Generation
+          🦠 Next Generation
           </button>
           <button className="btn btn-default" onClick={() => this.props.generate(5)}>
-            Next 5 Generations
+          🦠 Next 5 Generations
           </button>
           <button className="btn btn-default" onClick={() => this.props.generate(10)}>
-            Next 10 Generations
+          🦠 Next 10 Generations
+          </button>
+          <button className="btn btn-default" onClick={this.props.previous}>
+            previous
           </button>
           <Dropdown onSelect={this.handleSelect}>
           <Dropdown.Toggle
@@ -116,7 +119,8 @@ class Main extends React.Component {
       generation: 0,
       gridFull: Array(this.rows)
         .fill()
-        .map(() => Array(this.cols).fill(false))
+        .map(() => Array(this.cols).fill(false)),
+      previous: null
     };
   }
 
@@ -140,6 +144,13 @@ class Main extends React.Component {
     );
     this.setState(() => ({ gridFull }));
   };
+
+  previous = () => {
+    if(this.state.previous && this.state.generation !== 1){
+      let previous = this.state.previous
+      this.setState(() => ({gridFull: previous, generation: this.state.generation - 1, previous: null}))
+    }
+  }
 
   playButton = () => {
     clearInterval(this.intervalId);
@@ -215,6 +226,7 @@ class Main extends React.Component {
       }
     }
     this.setState(prevState => ({
+      previous: this.state.gridFull,
       gridFull: g2,
       generation: prevState.generation + 1
     }));
@@ -233,6 +245,7 @@ class Main extends React.Component {
           seed={this.seed}
           gridSize={this.gridSize}
           generate={this.generate}
+          previous={this.previous}
         />
         <Grid
           gridFull={this.state.gridFull}
