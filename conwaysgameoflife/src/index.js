@@ -88,7 +88,7 @@ class Buttons extends React.Component {
           🦠 Next 10 Generations
           </button>
           <button className="btn btn-default" onClick={this.props.previous}>
-            previous
+            Previous Generation
           </button>
           <Dropdown onSelect={this.handleSelect}>
           <Dropdown.Toggle
@@ -178,7 +178,8 @@ class Main extends React.Component {
 
     this.setState(() => ({
       gridFull,
-      generation: 0
+      generation: 0,
+      previous: null
     }));
     this.pauseButton()
   };
